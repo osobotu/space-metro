@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "180104404017",
+    "project_id": "space-metro-by-obotu",
+    "storage_bucket": "space-metro-by-obotu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180104404017:android:095799866049cab63b4910",
+        "android_client_info": {
+          "package_name": "com.example.space_metro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARVInVauel1Ja3q9K4DHncVS2zqH537TI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

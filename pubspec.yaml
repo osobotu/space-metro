@@ -1,15 +1,18 @@
 name: space_metro
-description: A new Flutter project.
+description: Learn how to fail fast from this simple flutter game
 
 # Prevent accidental publishing to pub.dev.
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
+  sdk: ">=3.1.3 <4.0.0"
 
 dependencies:
+  animated_text_kit: ^4.2.2
+  audioplayers: ^5.2.1
+  firebase_core: ^2.24.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -31,3 +34,10 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/sounds/
+
+  fonts:
+    - family: AlmendraSC
+      fonts:
+        - asset: assets/fonts/AlmendraSC-Regular.ttf
+          weight: 500

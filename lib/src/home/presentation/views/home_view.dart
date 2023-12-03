@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:space_metro/src/core/extensions/context_extensions.dart';
+import 'package:space_metro/src/core/services/audio_service.dart';
+import 'package:space_metro/src/core/theme/colors.dart';
 import 'package:space_metro/src/home/presentation/components/game_background.dart';
 import 'package:space_metro/src/home/presentation/logic/game_state.dart';
 
@@ -51,14 +54,30 @@ class _GameBoardState extends State<GameBoard> {
 
   GameState gameState = NotStartedGame();
 
+  late MetroAudioService metroAudioService;
+
+  @override
+  void dispose() {
+    metroAudioService.stopBackgroundSound();
+    super.dispose();
+  }
+
   @override
   void initState() {
+    // background music
+    metroAudioService = MetroAudioService();
+    metroAudioService.startBackgroundSound();
+
+    // mines
     minePositions += getPositionOfMines(
       numberOfMines: widget.size.width * 2,
       boardSize: widget.size,
     );
+
+    // winning
     winningPositions += getWinningPositions(widget.size);
 
+    // initial accessible positions
     if (gameState is NotStartedGame) {
       accessiblePositions += getInitialAccessiblePositions(widget.size);
     }
@@ -102,24 +121,88 @@ class _GameBoardState extends State<GameBoard> {
                             boardSize: widget.size));
                       });
                       if (minePositions.contains(spaceShipPosition)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text("Oops! You stepped on a mine! Try again."),
-                          ),
-                        );
-                        await _resetGame(EndStatus.failure);
-                      }
-                      if (winningPositions.contains(spaceShipPosition)) {
+                        await metroAudioService.pauseBackgroundSound();
+                        await metroAudioService.playFailureSound();
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Whohoo! You escaped all mines! "),
-                            ),
-                          );
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return MetroDialog(
+                                  title: 'Oops!!! You stepped on a mine.',
+                                  imageAsset: '',
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        if (context.navigator.canPop()) {
+                                          context.navigator.pop();
+                                        }
+                                        await metroAudioService
+                                            .resumeBackgroundSound();
+                                        await _resetGame(EndStatus.failure);
+                                      },
+                                      child: const Text('Try Again'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        if (context.navigator.canPop()) {
+                                          context.navigator.pop();
+                                          context.navigator.pop();
+                                        }
+                                        await metroAudioService
+                                            .stopBackgroundSound();
+                                      },
+                                      child: const Text('End Game'),
+                                    ),
+                                  ],
+                                );
+                              });
                         }
+                      }
 
-                        await _resetGame(EndStatus.success);
+                      if (winningPositions.contains(spaceShipPosition) &&
+                          !(minePositions.contains(spaceShipPosition))) {
+                        await metroAudioService.pauseBackgroundSound();
+                        await metroAudioService.playSuccessSound();
+                        if (context.mounted) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return MetroDialog(
+                                  title: 'Woohoo! You escaped all mines!',
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        if (context.navigator.canPop()) {
+                                          context.navigator.pop();
+                                        }
+                                        await _resetGame(EndStatus.success);
+                                        minePositions.clear();
+                                        minePositions += getPositionOfMines(
+                                          numberOfMines: widget.size.width * 2,
+                                          boardSize: widget.size,
+                                        );
+                                        await metroAudioService
+                                            .resumeBackgroundSound();
+                                        // todo: find a way to increase the difficulty of the game
+                                      },
+                                      child: const Text('Play Again'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        if (context.navigator.canPop()) {
+                                          context.navigator.pop();
+                                          context.navigator.pop();
+                                        }
+                                        await metroAudioService
+                                            .stopBackgroundSound();
+                                      },
+                                      child: const Text('End Game'),
+                                    ),
+                                  ],
+                                  imageAsset: '',
+                                );
+                              });
+                        }
                       }
                     }
                   },
@@ -175,17 +258,59 @@ class _GameBoardState extends State<GameBoard> {
         )
       ],
     );
+
     // });
   }
 
   Future<void> _resetGame(EndStatus status) async {
-    gameState = EndedGame(status: status);
+    gameState = NotStartedGame();
     accessiblePositions.clear();
     accessiblePositions += getInitialAccessiblePositions(widget.size);
     Future.delayed(const Duration(milliseconds: 100)).then((value) {
       spaceShipPosition = (col: -1, row: -1);
       hoveredBox = (col: -1, row: -1);
     });
+  }
+}
+
+class MetroDialog extends StatelessWidget {
+  const MetroDialog({
+    super.key,
+    required this.title,
+    required this.actions,
+    required this.imageAsset,
+  });
+  final String title;
+  final String imageAsset;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      contentPadding: const EdgeInsets.all(24),
+      children: [
+        SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: context.textTheme.headlineSmall!
+                    .copyWith(color: MetroPalette.primary),
+              ),
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ...actions,
+                ],
+              )
+            ],
+          ),
+        )
+      ],
+    );
   }
 }
 
