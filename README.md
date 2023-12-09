@@ -4,9 +4,13 @@ Recently, I completed the [McKinsey Forward Program](https://www.mckinsey.com/fo
 
 I decided to make an implementation of this game using Flutter. Here is a screenshot of my version:
 
+<img width="1680" alt="Screenshot 2023-12-10 at 12 29 01 AM" src="https://github.com/osobotu/space-metro/assets/72420125/710b0cf8-d4f6-480c-af32-1de581f88389">
+
 ## How To Play
 
 The goal of the game is simple. Get across the board from left to right, one square at a time, within a fixed boundary, without stepping on any mines. Good luck!
+
+<img width="1680" alt="Screenshot 2023-12-10 at 12 30 15 AM" src="https://github.com/osobotu/space-metro/assets/72420125/fab64e25-71bc-48b8-9d44-d1adfe582754">
 
 ## Installation
 
