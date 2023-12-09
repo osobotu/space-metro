@@ -1,6 +1,10 @@
-# space_metro
+# Space Metro
 
-A new Flutter project.
+Recently, I completed the McKinsey Forward Program and during the one of the Problem Solving Workshops, we played a game to learn the concept of Agile. Summarily, you fail fast and win quickly. The idea is to get feedback quickly and improve your solution based on the feedback.
+
+Here is a screenshot of McKinsey's version:
+
+I decided to make an implementation of this game using Flutter. Here is a screenshot of my version:
 
 ## Getting Started
 
