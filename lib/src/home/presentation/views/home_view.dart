@@ -221,14 +221,14 @@ class _GameBoardState extends State<GameBoard> {
                               ? Border.all(color: Colors.white)
                               : null,
                         ),
-                        width: 100,
-                        height: 100,
+                        width: context.scale(100),
+                        height: context.scale(100),
                         child: ((spaceShipPosition.row == w &&
                                 spaceShipPosition.col == h))
                             ? Center(
                                 child: Container(
-                                  width: 50,
-                                  height: 50,
+                                  width: context.scale(50),
+                                  height: context.scale(50),
                                   decoration: ShapeDecoration(
                                     shape: const OvalBorder(),
                                     color: minePositions
@@ -246,8 +246,8 @@ class _GameBoardState extends State<GameBoard> {
                           color: failed
                               ? Colors.redAccent.withOpacity(0.5)
                               : Colors.tealAccent.withOpacity(0.5),
-                          width: 100,
-                          height: 100,
+                          width: context.scale(100),
+                          height: context.scale(100),
                         ),
                     ],
                   ),
