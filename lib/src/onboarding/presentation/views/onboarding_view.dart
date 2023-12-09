@@ -14,7 +14,96 @@ class OnboardingView extends StatelessWidget {
     return const Scaffold(
       body: MetroResponsiveWidget(
         desktop: _DesktopOnboardingView(),
-        mobile: Text('Mobile View'),
+        mobile: _MobileOnboardingView(),
+        tablet: _MobileOnboardingView(),
+      ),
+    );
+  }
+}
+
+class _MobileOnboardingView extends StatelessWidget {
+  const _MobileOnboardingView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                'Welcome to Space Metro',
+                style: context.textTheme.displaySmall!
+                    .copyWith(color: MetroPalette.primary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                // width: context.scale(50),
+                height: 300,
+                child: Image.asset(
+                  MetroAssets.gameBoard,
+                  fit: BoxFit.fill,
+                  height: double.infinity,
+                ),
+              ),
+              const SizedBox(height: 16),
+              DefaultTextStyle(
+                style: context.textTheme.headlineMedium!
+                    .copyWith(fontWeight: FontWeight.normal, fontSize: 20),
+                textAlign: TextAlign.center,
+                child: AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText(
+                      'Your objective is to get across the board, \nfrom left to right, \none step at a time, \nwithout stepping on any mines.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                  displayFullTextOnTap: true,
+                  totalRepeatCount: 1,
+                ),
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).restorablePushNamed(MetroRouter.game);
+                },
+                style: ElevatedButton.styleFrom(
+                  fixedSize: Size(
+                    context.scale(300),
+                    context.scale(50),
+                  ),
+                ),
+                child: const Text('Play'),
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.center,
+                child: Text.rich(
+                  TextSpan(
+                    text: 'Made by ',
+                    children: [
+                      TextSpan(
+                        text: 'Obotu',
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          color: MetroPalette.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

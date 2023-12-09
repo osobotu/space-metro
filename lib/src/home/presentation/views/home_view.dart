@@ -64,9 +64,10 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   void initState() {
-    // background music
     metroAudioService = MetroAudioService();
-    metroAudioService.startBackgroundSound();
+
+    // background music
+    // metroAudioService.startBackgroundSound();
 
     // mines
     minePositions += getPositionOfMines(
@@ -121,7 +122,7 @@ class _GameBoardState extends State<GameBoard> {
                             boardSize: widget.size));
                       });
                       if (minePositions.contains(spaceShipPosition)) {
-                        await metroAudioService.pauseBackgroundSound();
+                        // await metroAudioService.pauseBackgroundSound();
                         await metroAudioService.playFailureSound();
                         if (context.mounted) {
                           showDialog(
@@ -136,8 +137,8 @@ class _GameBoardState extends State<GameBoard> {
                                         if (context.navigator.canPop()) {
                                           context.navigator.pop();
                                         }
-                                        await metroAudioService
-                                            .resumeBackgroundSound();
+                                        // await metroAudioService
+                                        // .resumeBackgroundSound();
                                         await _resetGame(EndStatus.failure);
                                       },
                                       child: const Text('Try Again'),
@@ -148,8 +149,8 @@ class _GameBoardState extends State<GameBoard> {
                                           context.navigator.pop();
                                           context.navigator.pop();
                                         }
-                                        await metroAudioService
-                                            .stopBackgroundSound();
+                                        // await metroAudioService
+                                        // .stopBackgroundSound();
                                       },
                                       child: const Text('End Game'),
                                     ),
@@ -161,7 +162,7 @@ class _GameBoardState extends State<GameBoard> {
 
                       if (winningPositions.contains(spaceShipPosition) &&
                           !(minePositions.contains(spaceShipPosition))) {
-                        await metroAudioService.pauseBackgroundSound();
+                        // await metroAudioService.pauseBackgroundSound();
                         await metroAudioService.playSuccessSound();
                         if (context.mounted) {
                           showDialog(
@@ -181,8 +182,8 @@ class _GameBoardState extends State<GameBoard> {
                                           numberOfMines: widget.size.width * 2,
                                           boardSize: widget.size,
                                         );
-                                        await metroAudioService
-                                            .resumeBackgroundSound();
+                                        // await metroAudioService
+                                        // .resumeBackgroundSound();
                                         // todo: find a way to increase the difficulty of the game
                                       },
                                       child: const Text('Play Again'),
@@ -193,8 +194,8 @@ class _GameBoardState extends State<GameBoard> {
                                           context.navigator.pop();
                                           context.navigator.pop();
                                         }
-                                        await metroAudioService
-                                            .stopBackgroundSound();
+                                        // await metroAudioService
+                                        // .stopBackgroundSound();
                                       },
                                       child: const Text('End Game'),
                                     ),

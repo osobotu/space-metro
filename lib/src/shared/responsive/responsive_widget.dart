@@ -17,6 +17,7 @@ class MetroResponsiveWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final maxWidth = constraints.maxWidth;
+      print(maxWidth);
 
       if (maxWidth > MetroDimensions.maxTabletWidth) {
         return desktop;
