@@ -18,6 +18,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   get_it: ^7.6.4
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:

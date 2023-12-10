@@ -49,7 +49,7 @@ class SpaceMetroApp extends StatelessWidget {
       // SettingsController to display the correct theme.
       theme: MetroTheme.light(),
       darkTheme: MetroTheme.light(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
 
       // Define a function to handle named routes in order to support
       // Flutter web url navigation and deep linking.

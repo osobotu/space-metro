@@ -267,9 +267,11 @@ class _GameBoardState extends State<GameBoard> {
     gameState = NotStartedGame();
     accessiblePositions.clear();
     accessiblePositions += getInitialAccessiblePositions(widget.size);
-    Future.delayed(const Duration(milliseconds: 100)).then((value) {
-      spaceShipPosition = (col: -1, row: -1);
-      hoveredBox = (col: -1, row: -1);
+    Future.delayed(const Duration(milliseconds: 50)).then((value) {
+      setState(() {
+        spaceShipPosition = (col: -1, row: -1);
+        hoveredBox = (col: -1, row: -1);
+      });
     });
   }
 }
