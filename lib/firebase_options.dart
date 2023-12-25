@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '180104404017',
     projectId: 'space-metro-by-obotu',
     authDomain: 'space-metro-by-obotu.firebaseapp.com',
+    databaseURL: 'https://space-metro-by-obotu-default-rtdb.firebaseio.com',
     storageBucket: 'space-metro-by-obotu.appspot.com',
   );
 
@@ -57,6 +58,7 @@ class DefaultFirebaseOptions {
     appId: '1:180104404017:android:095799866049cab63b4910',
     messagingSenderId: '180104404017',
     projectId: 'space-metro-by-obotu',
+    databaseURL: 'https://space-metro-by-obotu-default-rtdb.firebaseio.com',
     storageBucket: 'space-metro-by-obotu.appspot.com',
   );
 
@@ -65,7 +67,9 @@ class DefaultFirebaseOptions {
     appId: '1:180104404017:ios:9c73329919081bce3b4910',
     messagingSenderId: '180104404017',
     projectId: 'space-metro-by-obotu',
+    databaseURL: 'https://space-metro-by-obotu-default-rtdb.firebaseio.com',
     storageBucket: 'space-metro-by-obotu.appspot.com',
+    iosClientId: '180104404017-rqbl1oo0i45ibc81gepiduc2gmufljmf.apps.googleusercontent.com',
     iosBundleId: 'com.example.spaceMetro',
   );
 
@@ -74,7 +78,9 @@ class DefaultFirebaseOptions {
     appId: '1:180104404017:ios:209b5d8521ea6db53b4910',
     messagingSenderId: '180104404017',
     projectId: 'space-metro-by-obotu',
+    databaseURL: 'https://space-metro-by-obotu-default-rtdb.firebaseio.com',
     storageBucket: 'space-metro-by-obotu.appspot.com',
+    iosClientId: '180104404017-eolu3e7iegoru8infrcb6hh9ae9gvo8d.apps.googleusercontent.com',
     iosBundleId: 'com.example.spaceMetro.RunnerTests',
   );
 }

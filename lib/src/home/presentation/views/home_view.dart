@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:space_metro/src/core/extensions/context_extensions.dart';
 import 'package:space_metro/src/core/services/audio_service.dart';
+import 'package:space_metro/src/core/services/auth_service.dart';
+import 'package:space_metro/src/core/services/local_storage_service.dart';
 import 'package:space_metro/src/core/theme/colors.dart';
 import 'package:space_metro/src/home/presentation/components/game_background.dart';
 import 'package:space_metro/src/home/presentation/logic/game_engine.dart';
@@ -19,9 +22,7 @@ class GamePage extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             BackgroundImageWidget(),
-            GameBoard(
-              size: (width: 6, height: 6),
-            ),
+            GameBoard(),
           ],
         ),
       ),
@@ -32,10 +33,10 @@ class GamePage extends StatelessWidget {
 class GameBoard extends StatefulWidget {
   const GameBoard({
     super.key,
-    required this.size,
+    // required this.size,
   });
 
-  final BoardSize size;
+  // final BoardSize size;
 
   @override
   State<GameBoard> createState() => _GameBoardState();
@@ -51,6 +52,7 @@ class _GameBoardState extends State<GameBoard> {
   late MetroAudioService metroAudioService;
   late GameEngine gameEngine;
   late GameController gameController;
+  late SecureStorage secureStorage;
 
   @override
   void dispose() {
@@ -63,7 +65,10 @@ class _GameBoardState extends State<GameBoard> {
   void initState() {
     metroAudioService = MetroAudioService();
     gameEngine = GameEngine();
-    gameController = GameController(gameEngine: gameEngine);
+    secureStorage = SecureStorage();
+    gameController =
+        GameController(gameEngine: gameEngine, secureStorage: secureStorage);
+
     // background music
     // metroAudioService.startBackgroundSound();
 
@@ -71,7 +76,7 @@ class _GameBoardState extends State<GameBoard> {
     minePositions += gameController.minePositions;
 
     // winning
-    winningPositions += gameController.winningPositions;
+    winningPositions += gameController.winningPositions(minePositions);
 
     // initial accessible positions
     if (gameController.value is NotStartedGame) {
@@ -93,6 +98,8 @@ class _GameBoardState extends State<GameBoard> {
         builder: (context, _) {
           // final hoveredBox = gameController.hoveredBox.value;
           // final spaceShipPosition = gameController.spaceShipPosition.value;
+          final size = gameController.size;
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -101,25 +108,33 @@ class _GameBoardState extends State<GameBoard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ...List.generate(widget.size.height, (i) => i).map(
-                      (h) => Row(
+                    Text(
+                      FirebaseAuthService.currentUser?.displayName ?? '',
+                      style: context.textTheme.headlineLarge!
+                          .copyWith(color: MetroPalette.white),
+                    ),
+                    const SizedBox(height: 20),
+                    ...List.generate(size.height, (i) => i).map(
+                      (row) => Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ...List.generate(widget.size.width, (i) => i)
-                              .map((w) {
+                          ...List.generate(size.width, (i) => i).map((col) {
                             final isHovering =
-                                (gameController.hoveredBox.value.col == h &&
-                                    gameController.hoveredBox.value.row == w);
+                                (gameController.hoveredBox.value.col == col &&
+                                    gameController.hoveredBox.value.row == row);
                             final hasSpaceship = (gameController
                                         .spaceShipPosition.value.row ==
-                                    w &&
+                                    row &&
                                 gameController.spaceShipPosition.value.col ==
-                                    h);
-                            final currentPosition = (col: h, row: w);
+                                    col);
+                            final currentPosition = (col: col, row: row);
+                            final showMine =
+                                minePositions.contains(currentPosition);
+                            // print(currentPosition);
                             return InkWell(
                               onHover: (val) {
                                 gameController.hoveredBox.value =
-                                    (col: h, row: w);
+                                    (col: col, row: row);
                               },
                               onTap: () async {
                                 /// If the game has not started, the player will only be able to access boxes
@@ -141,6 +156,7 @@ class _GameBoardState extends State<GameBoard> {
                                     await metroAudioService.playFailureSound();
                                     if (context.mounted) {
                                       gameController.increaseTotal();
+                                      gameController.saveScores();
                                       showDialog(
                                           context: context,
                                           builder: (context) {
@@ -188,6 +204,7 @@ class _GameBoardState extends State<GameBoard> {
                                     if (context.mounted) {
                                       gameController.increaseTotal();
                                       gameController.increaseWins();
+                                      gameController.saveScores();
                                       showDialog(
                                           context: context,
                                           builder: (context) {
@@ -207,8 +224,8 @@ class _GameBoardState extends State<GameBoard> {
                                                     minePositions += gameEngine
                                                         .getPositionOfMines(
                                                       numberOfMines:
-                                                          widget.size.width * 2,
-                                                      boardSize: widget.size,
+                                                          size.width * 2,
+                                                      boardSize: size,
                                                     );
                                                     // await metroAudioService
                                                     // .resumeBackgroundSound();
@@ -241,12 +258,12 @@ class _GameBoardState extends State<GameBoard> {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: h.isEven
-                                          ? w.isEven
+                                      color: row.isEven
+                                          ? col.isEven
                                               ? Colors.transparent
                                                   .withOpacity(0.5)
                                               : Colors.black
-                                          : w.isEven
+                                          : col.isEven
                                               ? Colors.black
                                               : Colors.transparent
                                                   .withOpacity(0.5),
@@ -287,6 +304,13 @@ class _GameBoardState extends State<GameBoard> {
                                       width: context.scale(100),
                                       height: context.scale(100),
                                     ),
+                                  if (kDebugMode && showMine)
+                                    Container(
+                                      color: Colors.green.withOpacity(0.5),
+                                      // color: Colors.tealAccent.withOpacity(0.5),
+                                      width: context.scale(100),
+                                      height: context.scale(100),
+                                    ),
                                 ],
                               ),
                             );
@@ -297,10 +321,8 @@ class _GameBoardState extends State<GameBoard> {
                   ],
                 ),
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
+              if (context.isMobile || context.isTablet)
+                Column(
                   children: [
                     Text(
                       'Total Plays: ${gameController.totalPlays.value}',
@@ -315,13 +337,38 @@ class _GameBoardState extends State<GameBoard> {
                     ),
                     const SizedBox(width: 20),
                     Text(
-                      'Win ratio: ${gameController.winRatio.toStringAsFixed(2)}',
+                      'Win %: ${gameController.winRatio.toStringAsFixed(2)} %',
                       style: context.textTheme.headlineLarge!
                           .copyWith(color: MetroPalette.white),
                     ),
                   ],
                 ),
-              )
+              if (context.isDesktop)
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Total Plays: ${gameController.totalPlays.value}',
+                        style: context.textTheme.headlineLarge!
+                            .copyWith(color: MetroPalette.white),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(
+                        'Wins: ${gameController.wins.value}',
+                        style: context.textTheme.headlineLarge!
+                            .copyWith(color: MetroPalette.white),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(
+                        'Win %: ${gameController.winRatio.toStringAsFixed(2)} %',
+                        style: context.textTheme.headlineLarge!
+                            .copyWith(color: MetroPalette.white),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           );
         });

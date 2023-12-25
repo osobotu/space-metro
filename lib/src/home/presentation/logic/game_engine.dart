@@ -31,15 +31,39 @@ class GameEngine {
     required BoardSize boardSize,
   }) {
     var minePositions = <Position>{};
-    while (minePositions.length != numberOfMines) {
-      // get random position for mine
-      final Random random = Random(DateTime.now().millisecond);
-      final mine = (
-        col: random.nextInt(boardSize.height),
-        row: random.nextInt(boardSize.width)
-      );
-      minePositions.add(mine);
+    // ! new implementation
+    List<Position> getPositionsInColumn(
+        {required int index, required int count}) {
+      final colMinePositions = <Position>{};
+
+      while (colMinePositions.length != count) {
+        final Random random = Random(DateTime.now().millisecond);
+        final colMine = (col: index, row: random.nextInt(6));
+        colMinePositions.add(colMine);
+      }
+
+      return colMinePositions.toList();
     }
+
+    for (int i = 0; i < boardSize.width; i++) {
+      minePositions.addAll(
+        getPositionsInColumn(
+          index: i,
+          count: (numberOfMines ~/ boardSize.width),
+        ),
+      );
+    }
+
+    // ! new implementation
+    // while (minePositions.length != numberOfMines) {
+    //   // get random position for mine
+    //   final Random random = Random(DateTime.now().millisecond);
+    //   final mine = (
+    //     col: random.nextInt(boardSize.height),
+    //     row: random.nextInt(boardSize.width)
+    //   );
+    //   minePositions.add(mine);
+    // }
     return minePositions.toList();
   }
 
@@ -48,7 +72,7 @@ class GameEngine {
   List<Position> getStartingPositions(BoardSize boardSize) {
     List<Position> accessiblePositions = [];
     for (int i = 0; i < boardSize.height; i++) {
-      accessiblePositions.add((col: i, row: 0));
+      accessiblePositions.add((col: 0, row: i));
     }
     return accessiblePositions;
   }
@@ -59,7 +83,7 @@ class GameEngine {
       BoardSize boardSize, List<Position> minePositions) {
     List<Position> winningPositions = [];
     for (int i = 0; i < boardSize.height; i++) {
-      final coordinate = (col: i, row: boardSize.width - 1);
+      final coordinate = (col: boardSize.width - 1, row: i);
       if (!minePositions.contains(coordinate)) {
         winningPositions.add(coordinate);
       }

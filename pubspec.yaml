@@ -12,12 +12,17 @@ environment:
 dependencies:
   animated_text_kit: ^4.2.2
   audioplayers: ^5.2.1
+  firebase_auth: ^4.15.3
   firebase_core: ^2.24.0
+  firebase_database: ^10.3.8
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_secure_storage: ^9.0.0
+  flutter_svg: ^2.0.9
   get_it: ^7.6.4
+  shared_preferences: ^2.2.2
   url_launcher: ^6.2.2
 
 dev_dependencies:
@@ -35,6 +40,7 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/svgs/
     - assets/sounds/
 
   fonts:
